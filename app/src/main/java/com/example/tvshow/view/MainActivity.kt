@@ -13,28 +13,54 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var popularTVShow: RecyclerView
     private lateinit var popularTVShowAdapter: TVShowAdapter
+    private lateinit var popularTVShowLayoutManager: LinearLayoutManager
+
+    private var popularTVShowPage = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         popularTVShow = findViewById(R.id.popular_tvshow)
-        popularTVShow.layoutManager = LinearLayoutManager(
+        popularTVShowLayoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        popularTVShowAdapter = TVShowAdapter(listOf())
+        popularTVShow.layoutManager = popularTVShowLayoutManager
+        popularTVShowAdapter = TVShowAdapter(mutableListOf())
         popularTVShow.adapter = popularTVShowAdapter
 
+        getPopularTVShow()
+    }
+
+    private fun getPopularTVShow() {
         TVShowRepository.getPopularTVShow(
+            popularTVShowPage,
             onError = ::onError,
             onSuccess = ::onPopularTVShowFetched
         )
     }
 
     private fun onPopularTVShowFetched(tvshow: List<TVShow>) {
-        popularTVShowAdapter.updateTVShow(tvshow)
+        popularTVShowAdapter.appendTVShow(tvshow)
+        attachPopularTVShowOnScrollListener()
+    }
+
+    private fun attachPopularTVShowOnScrollListener() {
+        popularTVShow.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val totalItemCount = popularTVShowLayoutManager.itemCount
+                val visibleItemCount = popularTVShowLayoutManager.childCount
+                val firstVisibleItem = popularTVShowLayoutManager.findFirstVisibleItemPosition()
+
+                if(firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    popularTVShow.removeOnScrollListener(this)
+                    popularTVShowPage++
+                    getPopularTVShow()
+                }
+            }
+        })
     }
 
     private fun onError() {
