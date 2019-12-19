@@ -1,6 +1,7 @@
 package com.example.tvshow
 
 import android.util.Log
+import com.example.tvshow.model.TVShow
 import com.example.tvshow.model.TVShowResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,7 +21,12 @@ object TVShowRepository {
         api = retrofit.create(API_TVShow::class.java)
     }
 
-    fun getPopularTVShow(page: Int = 1) {
+    fun getPopularTVShow(
+        page: Int = 1,
+        onSuccess: (tv: List<TVShow>) -> Unit,
+        onError: () -> Unit
+    )
+    {
         api.getPopularTVShow(page = page)
             .enqueue(object : Callback<TVShowResponse> {
                 override fun onResponse(
@@ -31,15 +37,17 @@ object TVShowRepository {
                         val responseBody = response.body()
 
                         if (responseBody != null) {
-                            Log.d("Repository", "TVShow: ${responseBody.tv}")
+                            onSuccess.invoke(responseBody.tv)
                         } else {
-                            Log.d("Repository", "Failed to get response")
+                            onError.invoke()
                         }
+                    } else {
+                        onError.invoke()
                     }
                 }
 
                 override fun onFailure(call: Call<TVShowResponse>, t: Throwable) {
-                    Log.e("Repository", "onFailure", t)
+                    onError.invoke()
                 }
             })
     }
