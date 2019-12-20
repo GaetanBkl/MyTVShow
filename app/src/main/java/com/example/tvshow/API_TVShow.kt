@@ -12,4 +12,11 @@ interface API_TVShow {
         @Query("api_key") apiKey: String = "56b0da3c7e126ca8f7ad305c07137017",
         @Query("page") page: Int
     ): Call<TVShowResponse>
+
+    @GET("tv/top_rated")
+    fun getTopRatedTVShow(
+        @Query("api_key") apiKey: String = "56b0da3c7e126ca8f7ad305c07137017",
+        @Query("page") page: Int
+    ): Call<TVShowResponse>
+
 }
