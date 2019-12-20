@@ -51,4 +51,36 @@ object TVShowRepository {
                 }
             })
     }
+
+    fun getTopRatedTVShow(
+        page: Int = 1,
+        onSuccess: (tv: List<TVShow>) -> Unit,
+        onError: () -> Unit
+    )
+    {
+        api.getTopRatedTVShow(page = page)
+            .enqueue(object : Callback<TVShowResponse> {
+                override fun onResponse(
+                    call: Call<TVShowResponse>,
+                    response: Response<TVShowResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+
+                        if (responseBody != null) {
+                            onSuccess.invoke(responseBody.tv)
+                        } else {
+                            onError.invoke()
+                        }
+                    } else {
+                        onError.invoke()
+                    }
+                }
+
+                override fun onFailure(call: Call<TVShowResponse>, t: Throwable) {
+                    onError.invoke()
+                }
+            })
+    }
+
 }
