@@ -1,11 +1,13 @@
 package com.example.tvshow
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.arthlimchiu.mytvshows.*
 import com.example.tvshow.model.TVShow
 import com.example.tvshow.model.TVShowAdapter
 
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         )
         popularTVShow.layoutManager = popularTVShowLayoutManager
         popularTVShowAdapter = TVShowAdapter(mutableListOf())
+        { tvshow -> showTVShowDetails(tvshow) }
         popularTVShow.adapter = popularTVShowAdapter
 
         topRatedTVShow = findViewById(R.id.top_rated_tvshows)
@@ -46,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         )
         topRatedTVShow.layoutManager = topRatedTVShowLayoutManager
         topRatedTVShowAdapter = TVShowAdapter(mutableListOf())
+        { tvshow -> showTVShowDetails(tvshow) }
         topRatedTVShow.adapter = topRatedTVShowAdapter
 
         getTopRatedTVShow()
@@ -79,6 +83,16 @@ class MainActivity : AppCompatActivity() {
         attachTopRatedTVShowOnScrollListener()
     }
 
+    private fun showTVShowDetails(tvshow: TVShow) {
+        val intent = Intent(this, TVShowDetailsActivity::class.java)
+        intent.putExtra(TVSHOW_BACKDROP, tvshow.backdropPath)
+        intent.putExtra(TVSHOW_POSTER, tvshow.posterPath)
+        intent.putExtra(TVSHOW_TITLE, tvshow.title)
+        intent.putExtra(TVSHOW_RATING, tvshow.rating)
+        intent.putExtra(TVSHOW_RELEASE_DATE, tvshow.releaseDate)
+        intent.putExtra(TVSHOW_OVERVIEW, tvshow.overview)
+        startActivity(intent)
+    }
 
     private fun attachPopularTVShowOnScrollListener() {
         popularTVShow.addOnScrollListener(object : RecyclerView.OnScrollListener() {

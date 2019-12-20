@@ -11,7 +11,8 @@ import com.example.tvshow.R
 import java.util.Collections.addAll
 
 class TVShowAdapter(
-    private var tvshow: MutableList<TVShow>
+    private var tvshow: MutableList<TVShow>,
+    private val onTVShowClick: (tvshow: TVShow) -> Unit
 ) : RecyclerView.Adapter<TVShowAdapter.TVShowViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TVShowViewHolder {
@@ -44,6 +45,7 @@ class TVShowAdapter(
                 .load("https://image.tmdb.org/t/p/w342${tvshow.posterPath}")
                 .transform(CenterCrop())
                 .into(poster)
+            itemView.setOnClickListener { onTVShowClick.invoke(tvshow) }
         }
     }
 }
