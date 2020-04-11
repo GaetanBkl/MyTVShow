@@ -20,3 +20,4 @@ J'ai également appris à gérer la mise à jour des données de l'application s
 Enfin j'ai appris à utiliser différentes fonctions Kotlin notament pour les fonctions de rappels.
 test update
 test test 
+encore plus de test
